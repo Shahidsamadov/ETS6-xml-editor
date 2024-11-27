@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group Address Manager</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Group Address Manager</h1>
+
+    <div id="form">
+        <div class="form-group">
+            <label for="mainGroupName">Main Group Name:</label>
+            <input type="text" id="mainGroupName" placeholder="Enter Main Group Name">
+            <label for="mainGroupIndex">Main Group Index:</label>
+            <input type="number" id="mainGroupIndex" placeholder="1-32" min="1" max="32">
+        </div>
+        <div class="form-group">
+            <label for="middleGroupName">Middle Group Name:</label>
+            <input type="text" id="middleGroupName" placeholder="Enter Middle Group Name">
+            <label for="middleGroupIndex">Middle Group Index:</label>
+            <input type="number" id="middleGroupIndex" placeholder="1-8" min="1" max="8">
+        </div>
+        <div class="form-group">
+            <label for="subGroupName">Subgroup Name:</label>
+            <input type="text" id="subGroupName" placeholder="Enter Subgroup Name (optional)">
+            <label for="subGroupIndex">Subgroup Index:</label>
+            <input type="number" id="subGroupIndex" placeholder="1-255" min="1" max="255">
+        </div>
+        <div class="form-group">
+            <label for="dataPoint">DataPoint Type:</label>
+            <select id="dataPoint">
+                <!-- DataPoint options will be dynamically added -->
+            </select>
+        </div>
+        <button id="addGroupButton" onclick="addGroup()">Add Group</button>
+    </div>
+
+    <h2>Group Addresses</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Main Group</th>
+                <th>Middle Group</th>
+                <th>Subgroup</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="groupTable">
+            <!-- Rows will be dynamically added here -->
+        </tbody>
+    </table>
+
+    <input type="file" id="importXML" accept=".xml" style="margin-top: 20px;">
+    <button onclick="importFromXML()">Import XML</button>
+    <button onclick="exportToXML()">Export XML</button>
+
+    <script src="script.js"></script>
+</body>
+</html>
