@@ -7,10 +7,10 @@ const dataPointTypes = [
     { id: "DPST-1-003", name: "DPT_Enable" },
     { id: "DPST-1-004", name: "DPT_Ramp" },
     { id: "DPST-1-005", name: "DPT_Alarm" },
-    // Добавьте остальные DataPoint Types
+    
 ];
 
-// Инициализация выпадающего списка DataPoint
+
 function initializeDataPointDropdown() {
     const dataPointSelect = document.getElementById('dataPoint');
     dataPointTypes.forEach(dp => {
