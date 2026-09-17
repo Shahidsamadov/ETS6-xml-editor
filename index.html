@@ -1,61 +1,170 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Group Address Manager</title>
+    <title>Group Address Manager — KNX / ETS 6 XML editor</title>
+    <meta name="description"
+        content="Create, edit, import and export KNX group addresses in the ETS group address export format (XML), including DataPoint types.">
+    <meta name="color-scheme" content="light dark">
+    <link rel="icon"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b5cab'/%3E%3Cpath d='M8 11h16M8 16h16M8 21h10' stroke='white' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-    <h1>Group Address Manager</h1>
+    <a class="skip-link" href="#editor">Skip to the group address form</a>
 
-    <div id="form">
-        <div class="form-group">
-            <label for="mainGroupName">Main Group Name:</label>
-            <input type="text" id="mainGroupName" placeholder="Enter Main Group Name">
-            <label for="mainGroupIndex">Main Group Index:</label>
-            <input type="number" id="mainGroupIndex" placeholder="1-32" min="1" max="32">
+    <header class="app-header">
+        <div class="app-header__inner">
+            <h1>Group Address Manager</h1>
+            <p class="app-header__subtitle">
+                Create, edit and export KNX group addresses in the ETS 6 group address export format.
+            </p>
         </div>
-        <div class="form-group">
-            <label for="middleGroupName">Middle Group Name:</label>
-            <input type="text" id="middleGroupName" placeholder="Enter Middle Group Name">
-            <label for="middleGroupIndex">Middle Group Index:</label>
-            <input type="number" id="middleGroupIndex" placeholder="1-8" min="1" max="8">
-        </div>
-        <div class="form-group">
-            <label for="subGroupName">Subgroup Name:</label>
-            <input type="text" id="subGroupName" placeholder="Enter Subgroup Name (optional)">
-            <label for="subGroupIndex">Subgroup Index:</label>
-            <input type="number" id="subGroupIndex" placeholder="1-255" min="1" max="255">
-        </div>
-        <div class="form-group">
-            <label for="dataPoint">DataPoint Type:</label>
-            <select id="dataPoint">
-                
-            </select>
-        </div>
-        <button id="addGroupButton" onclick="addGroup()">Add Group</button>
-    </div>
+    </header>
 
-    <h2>Group Addresses</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Main Group</th>
-                <th>Middle Group</th>
-                <th>Subgroup</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody id="groupTable">
-           
-        </tbody>
-    </table>
+    <main class="layout">
+        <section class="card" id="editor" aria-labelledby="editor-title">
+            <h2 id="editor-title">Group address</h2>
 
-    <input type="file" id="importXML" accept=".xml" style="margin-top: 20px;">
-    <button onclick="importFromXML()">Import XML</button>
-    <button onclick="exportToXML()">Export XML</button>
+            <form id="group-form" novalidate>
+                <div class="field-grid">
+                    <div class="field">
+                        <label for="mainGroupName">Main group name</label>
+                        <input id="mainGroupName" name="mainGroupName" type="text" autocomplete="off"
+                            placeholder="e.g. Lighting" required>
+                        <p class="field__error" data-error-for="mainName" hidden></p>
+                    </div>
 
-    <script src="script.js"></script>
+                    <div class="field">
+                        <label for="mainGroupIndex">Main group index <span class="field__range">1–32</span></label>
+                        <input id="mainGroupIndex" name="mainGroupIndex" type="number" min="1" max="32" step="1"
+                            inputmode="numeric" placeholder="1">
+                        <p class="field__hint" id="hintMainIndex"></p>
+                        <p class="field__error" data-error-for="mainIndex" hidden></p>
+                    </div>
+
+                    <div class="field">
+                        <label for="middleGroupName">Middle group name</label>
+                        <input id="middleGroupName" name="middleGroupName" type="text" autocomplete="off"
+                            placeholder="e.g. Floor 1">
+                        <p class="field__error" data-error-for="middleName" hidden></p>
+                    </div>
+
+                    <div class="field">
+                        <label for="middleGroupIndex">Middle group index <span class="field__range">1–8</span></label>
+                        <input id="middleGroupIndex" name="middleGroupIndex" type="number" min="1" max="8" step="1"
+                            inputmode="numeric" placeholder="1">
+                        <p class="field__hint" id="hintMiddleIndex"></p>
+                        <p class="field__error" data-error-for="middleIndex" hidden></p>
+                    </div>
+
+                    <div class="field">
+                        <label for="subGroupName">Subgroup name <span class="field__range">optional</span></label>
+                        <input id="subGroupName" name="subGroupName" type="text" autocomplete="off"
+                            placeholder="e.g. Ceiling light">
+                        <p class="field__error" data-error-for="subName" hidden></p>
+                    </div>
+
+                    <div class="field">
+                        <label for="subGroupIndex">Subgroup index <span class="field__range">0–255</span></label>
+                        <input id="subGroupIndex" name="subGroupIndex" type="number" min="0" max="255" step="1"
+                            inputmode="numeric" placeholder="1">
+                        <p class="field__hint" id="hintSubIndex"></p>
+                        <p class="field__error" data-error-for="subIndex" hidden></p>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="dptFilter">DataPoint type</label>
+                    <div class="field-row">
+                        <input id="dptFilter" type="search" autocomplete="off"
+                            placeholder="Filter by id or name, e.g. 1-001 or Switch" aria-label="Filter DataPoint types">
+                        <select id="dataPoint" size="1" aria-describedby="dptHint"></select>
+                    </div>
+                    <p class="field__hint" id="dptHint">
+                        Leave it on “none” for a group address without a DataPoint type.
+                    </p>
+                </div>
+
+                <p class="address-preview" id="addressPreview" aria-live="polite">Group address: —</p>
+
+                <div id="formErrors" class="alert alert--error" role="alert" hidden></div>
+
+                <div class="form-actions">
+                    <button id="submitButton" type="submit" class="btn btn--primary">Add group address</button>
+                    <button id="cancelButton" type="button" class="btn btn--ghost" hidden>Cancel edit</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="card" aria-labelledby="list-title">
+            <div class="card__header">
+                <h2 id="list-title">Group addresses</h2>
+                <p class="summary" id="summary"></p>
+            </div>
+
+            <div class="toolbar" role="group" aria-label="Import and export">
+                <button id="importXmlButton" type="button" class="btn">Import XML</button>
+                <button id="exportXmlButton" type="button" class="btn">Export XML</button>
+                <span class="toolbar__divider" aria-hidden="true"></span>
+                <button id="importJsonButton" type="button" class="btn btn--quiet">Import project</button>
+                <button id="exportJsonButton" type="button" class="btn btn--quiet">Export project</button>
+                <span class="toolbar__spacer" aria-hidden="true"></span>
+                <button id="undoButton" type="button" class="btn btn--quiet" hidden>Undo last change</button>
+                <button id="clearAllButton" type="button" class="btn btn--danger-ghost">Delete everything</button>
+            </div>
+
+            <input type="file" id="importXmlInput" accept=".xml,application/xml,text/xml" hidden>
+            <input type="file" id="importJsonInput" accept=".json,application/json" hidden>
+
+            <div class="table-wrap">
+                <table>
+                    <caption class="visually-hidden">
+                        Group addresses with their main group, middle group, subgroup and DataPoint type
+                    </caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Address</th>
+                            <th scope="col">Main group</th>
+                            <th scope="col">Middle group</th>
+                            <th scope="col">Subgroup</th>
+                            <th scope="col">DataPoint type</th>
+                            <th scope="col"><span class="visually-hidden">Actions</span></th>
+                        </tr>
+                    </thead>
+                    <tbody id="groupTable"></tbody>
+                </table>
+                <p class="empty" id="emptyState" hidden>
+                    No group addresses yet. Add one above, or import an existing ETS export.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <div class="toasts" id="toasts"></div>
+
+    <footer class="app-footer">
+        <p>
+            Everything is stored in your browser only — no data is uploaded anywhere.
+            The ETS export format is <code>http://knx.org/xml/ga-export/01</code>.
+        </p>
+    </footer>
+
+    <noscript>
+        <div class="alert alert--error">This application needs JavaScript to run.</div>
+    </noscript>
+
+    <script src="src/dpt-types.js"></script>
+    <script src="src/dpt.js"></script>
+    <script src="src/tree.js"></script>
+    <script src="src/xml.js"></script>
+    <script src="src/storage.js"></script>
+    <script src="src/dialog.js"></script>
+    <script src="src/ui.js"></script>
+    <script src="src/main.js"></script>
 </body>
+
 </html>
